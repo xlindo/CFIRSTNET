@@ -1,0 +1,9 @@
+albumentations==1.4.4
+datasets==2.19.0
+matplotlib==3.8.4
+numpy==1.26.4
+pandas==2.2.2
+timm==0.9.0
+torch==2.0.0
+torcheval==0.0.7
+wandb==0.16.6
