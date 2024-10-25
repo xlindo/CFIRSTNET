@@ -2,7 +2,7 @@
 
 ## Introduction
 
-
+We propose a comprehensive solution to combine both the advantages of image-based and netlist-based features in neural network framework and obtain high-quality IR drop prediction very effectively in modern designs. A customized convolutional neural network (CNN) is developed to extract PDN features and make static IR drop estimations. Trained and evaluated with the open-source dataset, experiment results show that we have obtained the best quality in the benchmark on the problem of IR drop estimation in ICCAD CAD Contest 2023.
 
 ## Install & Build
 
