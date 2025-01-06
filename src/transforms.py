@@ -27,4 +27,4 @@ def reverse_normalize(batch, mean=None, std=None, H=None, W=None, mode="bicubic"
 
 # src/transforms.py
 def reverse_transform(batch, mean=None, std=None, H=None, W=None, mode="bicubic"):
-    return reverse_normalize(batch, mean, std, H, W, mode) 
+    return reverse_normalize(batch, mean, std, H, W, mode)  # 可以直接调用已有的 reverse_normalize 函数

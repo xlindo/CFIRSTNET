@@ -97,6 +97,12 @@ class DiceLoss(nn.Module):
             input = (input - target_threshold) / self.std
             input = F.sigmoid(input)
 
+            if target.dim() == 3:
+                target = target.unsqueeze(1)
+            elif input.dim() == 4 and target.dim() == 4:
+                if input.size(1) != target.size(1):
+                    target = target[:, 0:1, :, :]
+
             input = torch.where((input > 0.5) == (target > 0.5), target, input)
 
             diceloss = single_dice_loss(input, target, self.squared_pred, self.jaccard, self.smooth_nr, self.smooth_dr)
@@ -123,12 +129,13 @@ class MSELoss(nn.Module):
         for input, target in zip(input, target):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
-            
-            if input.dim() == 4 and target.dim() == 3:
+
+            if target.dim() == 3:
                 target = target.unsqueeze(1) 
-            elif input.dim() != target.dim():
-                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
-            
+            elif input.dim() == 4 and target.dim() == 4:
+                if input.size(1) != target.size(1):
+                    target = target[:, 0:1, :, :]
+
             mse = self.MSE(input, target)
             loss = torch.cat((loss, mse.view(1)), dim=0)
             
@@ -153,14 +160,13 @@ class RMSELoss(nn.Module):
         for input, target in zip(input, target):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
-
-            if input.dim() == 4 and target.dim() == 3:
-                target = target.unsqueeze(1) 
-            elif input.dim() != target.dim():
-                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
             
-            mse = self.MSE(input, target)
-            loss = torch.cat((loss, mse.view(1)), dim=0)
+            if target.dim() == 3:
+                target = target.unsqueeze(1)
+            elif input.dim() == 4 and target.dim() == 4:
+                if input.size(1) != target.size(1):
+                    target = target[:, 0:1, :, :]
+
             mse = self.MSE(input, target)
             rmse = torch.sqrt(mse)
             loss = torch.cat((loss, rmse.view(1)), dim=0)
@@ -187,11 +193,12 @@ class MAELoss(nn.Module):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
             
-            if input.dim() == 4 and target.dim() == 3:
-                target = target.unsqueeze(1) 
-            elif input.dim() != target.dim():
-                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
-            
+            if target.dim() == 3:
+                target = target.unsqueeze(1)
+            elif input.dim() == 4 and target.dim() == 4:
+                if input.size(1) != target.size(1):
+                    target = target[:, 0:1, :, :]
+
             mae = self.MAE(input, target)
             loss = torch.cat((loss, mae.view(1)), dim=0)
         

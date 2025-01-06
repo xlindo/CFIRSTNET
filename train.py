@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('--project', type=str, default='CFIRSTNET', help='project name')
     parser.add_argument('--name', type=str, default='convnextv2_tiny_CF_BeGAN', help='experiemnt name')
 
-    parser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
+    parser.add_argument('--epochs', type=int, default=10, help='number of training epochs')
     parser.add_argument('--use_BeGAN', type=bool, default=False, help='use BeGAN dataset')
 
     parser.add_argument('--img_size', type=int, default=384, help='image size')
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('--gradient_accumulation', type=int, default=100, help='gradient accumulation steps')
 
     parser.add_argument('--num_workers', type=int, default=8, help='number of workers')
-    parser.add_argument('--use_amp', type=bool, default=True, help='use automatic mixed precision')
+    parser.add_argument('--use_amp', type=bool, default=False, help='use automatic mixed precision')
     parser.add_argument('--use_gpu', type=bool, default=False, help='use gpu')
     parser.add_argument('--gpu', type=int, default=0, help='gpu device')
 

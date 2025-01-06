@@ -34,7 +34,7 @@ class ICCAD_Data():
         image = A.resize(image, self.img_size, self.img_size, interpolation=self.interpolation)
         
         ir_drop = genfromtxt(ir_drop, delimiter=",") * 1e3
-        ir_drop = np.expand_dims(ir_drop, axis=0)
+        ir_drop = np.expand_dims(ir_drop, axis=0)  # 添加通道维度
             
         return {
             "data_idx": data_idx,
