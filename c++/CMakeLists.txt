@@ -10,8 +10,8 @@ include(CPack)
 
 set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -O3 -std=c++17")
 
-find_package(PythonLibs REQUIRED)
-include_directories( ${PYTHON_INCLUDE_DIRS} )
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
+include_directories(${Python_INCLUDE_DIRS})
 
 find_package(Boost COMPONENTS python numpy)
 include_directories (${Boost_INCLUDE_DIRS})

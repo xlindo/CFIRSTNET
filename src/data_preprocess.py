@@ -34,11 +34,12 @@ class ICCAD_Data():
         image = A.resize(image, self.img_size, self.img_size, interpolation=self.interpolation)
         
         ir_drop = genfromtxt(ir_drop, delimiter=",") * 1e3
+        ir_drop = np.expand_dims(ir_drop, axis=0)
             
         return {
             "data_idx": data_idx,
-            "H": ir_drop.shape[0],
-            "W": ir_drop.shape[1],
+            "H": ir_drop.shape[1],
+            "W": ir_drop.shape[2],
             "image": np.concatenate([image, netlist_map], axis=2).transpose(2, 0, 1),
             "ir_drop": ir_drop.reshape(-1, 1),
         }

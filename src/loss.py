@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from transforms import reverse_normalize
+from src.transforms import reverse_normalize
 
 def smooth_f1_loss(input, target, beta, epsilon):
     TP = (input * target).sum()
@@ -123,6 +123,11 @@ class MSELoss(nn.Module):
         for input, target in zip(input, target):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
+            
+            if input.dim() == 4 and target.dim() == 3:
+                target = target.unsqueeze(1) 
+            elif input.dim() != target.dim():
+                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
             
             mse = self.MSE(input, target)
             loss = torch.cat((loss, mse.view(1)), dim=0)

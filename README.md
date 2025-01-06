@@ -285,16 +285,20 @@ Our codes are seperated into two parts, data preprocess part coding with C++, an
 
 3. Install requirements for Conda environment.
 
+> if the given libdata.so not work
+
     ```Command-line
-    conda install --file conda_requirements.txt -y
+    conda install -c defaults --file conda_requirements.txt -y
     ```
 
 4. Build the C++ codes for data preprocess with CMake.
 
+> if the given libdata.so not work
+
     ```Command-line
     cmake -S ./c++ -B ./c++/build
     cmake --build ./c++/build
-    cp ./c++/build/libdata.so ./src/libdata.so
+    cp ./c++/build/libdata.so ./libdata.so
     ```
 
 5. Install requirement for Python environment.

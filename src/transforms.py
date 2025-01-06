@@ -24,3 +24,7 @@ def reverse_normalize(batch, mean=None, std=None, H=None, W=None, mode="bicubic"
         batch = F.interpolate(batch, size=(H, W), mode=mode)
     
     return batch
+
+# src/transforms.py
+def reverse_transform(batch, mean=None, std=None, H=None, W=None, mode="bicubic"):
+    return reverse_normalize(batch, mean, std, H, W, mode) 

@@ -1,3 +1,6 @@
+import os
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+
 from functools import partial
 
 import time
@@ -24,12 +27,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='CFIRSTNET')
     parser.add_argument('--seed', type=int, default=1224, help='random seed')
 
-    parser.add_argument('--wandb', type=bool, default=True, help='use wandb')
+    parser.add_argument('--wandb', type=bool, default=False, help='use wandb')
     parser.add_argument('--project', type=str, default='CFIRSTNET', help='project name')
     parser.add_argument('--name', type=str, default='convnextv2_tiny_CF_BeGAN', help='experiemnt name')
 
     parser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
-    parser.add_argument('--use_BeGAN', type=bool, default=True, help='use BeGAN dataset')
+    parser.add_argument('--use_BeGAN', type=bool, default=False, help='use BeGAN dataset')
 
     parser.add_argument('--img_size', type=int, default=384, help='image size')
     parser.add_argument('--interpolation', type=str, default='area', help='interpolation method, options:[area, linear, cubic, nearest]')
@@ -62,7 +65,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--num_workers', type=int, default=8, help='number of workers')
     parser.add_argument('--use_amp', type=bool, default=True, help='use automatic mixed precision')
-    parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
+    parser.add_argument('--use_gpu', type=bool, default=False, help='use gpu')
     parser.add_argument('--gpu', type=int, default=0, help='gpu device')
 
     parser.add_argument('--save_model', type=bool, default=True, help='save best MAE model in validation set')
@@ -78,15 +81,15 @@ if __name__ == '__main__':
     if len(metal_orient) != metal_num or metal_orient.count(0) > 0:
         raise ValueError('Invalid metal definition')
 
-    in_channels = args.use_PDN + args.use_dist + args.use_current + args.use_HIRD * (metal_num * 2 - 1) + args.use_WR * (metal_num * 2 - 3) + args.use_RD * (metal_num * 2 - 3)
+    in_channels = args.use_PDN + args.use_dist + args.use_current + args.use_HIRD * (metal_num * 2 - 1) + args.use_WR * (metal_num * 2 - 3) + args.use_RD * (metal_num * 2 - 3) + 1
 
-    if args.interpolation is 'area':
+    if args.interpolation == 'area':
         interpolation = cv2.INTER_AREA
-    elif args.interpolation is 'linear':
+    elif args.interpolation == 'linear':
         interpolation = cv2.INTER_LINEAR
-    elif args.interpolation is 'cubic':
+    elif args.interpolation == 'cubic':
         interpolation = cv2.INTER_CUBIC
-    elif args.interpolation is 'nearest':
+    elif args.interpolation == 'nearest':
         interpolation = cv2.INTER_NEAREST
     else:
         raise ValueError('Invalid interpolation method')
@@ -112,14 +115,14 @@ if __name__ == '__main__':
 
     # create dataset
     train_dataset = load_dataset(
-        path = 'dataset.py',
+        path = 'src/dataset.py',
         test_mode = False,
         use_BeGAN = args.use_BeGAN,
         
         img_size = args.img_size,
         interpolation = interpolation,
         
-        split = 'fake+BeGAN_01+BeGAN_02',
+        split = 'fake',
         num_proc = args.num_workers,
         keep_in_memory = False,
         writer_batch_size = 10,
@@ -130,7 +133,7 @@ if __name__ == '__main__':
 
 
     valid_dataset = load_dataset(
-        path = 'dataset.py',
+        path = 'src/dataset.py',
         test_mode = False,
         use_BeGAN = args.use_BeGAN,
         
@@ -148,7 +151,7 @@ if __name__ == '__main__':
 
 
     test_dataset = load_dataset(
-        path = 'dataset.py',
+        path = 'src/dataset.py',
         test_mode = False,
         use_BeGAN = args.use_BeGAN,
         
@@ -216,7 +219,7 @@ if __name__ == '__main__':
     model = Net(
         model_backbone=args.backbone,
         model_pretrained=args.pretrained,
-        in_channels=args.in_channels,
+        in_channels=in_channels,
         stochastic_depth=args.stochastic_depth,
         dropout=args.dropout,
         decoder_channels=args.decoder_channels,
