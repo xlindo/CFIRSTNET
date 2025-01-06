@@ -153,7 +153,14 @@ class RMSELoss(nn.Module):
         for input, target in zip(input, target):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
+
+            if input.dim() == 4 and target.dim() == 3:
+                target = target.unsqueeze(1) 
+            elif input.dim() != target.dim():
+                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
             
+            mse = self.MSE(input, target)
+            loss = torch.cat((loss, mse.view(1)), dim=0)
             mse = self.MSE(input, target)
             rmse = torch.sqrt(mse)
             loss = torch.cat((loss, rmse.view(1)), dim=0)
@@ -179,6 +186,11 @@ class MAELoss(nn.Module):
         for input, target in zip(input, target):
             H, W = target.shape[-2:]
             input = reverse_normalize(input, H=H, W=W)
+            
+            if input.dim() == 4 and target.dim() == 3:
+                target = target.unsqueeze(1) 
+            elif input.dim() != target.dim():
+                raise ValueError(f"Input and target must have same number of dimensions, got {input.dim()} and {target.dim()}")
             
             mae = self.MAE(input, target)
             loss = torch.cat((loss, mae.view(1)), dim=0)
