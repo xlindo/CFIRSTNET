@@ -178,7 +178,7 @@ def train(args, model, train_loader, valid_loader, test_loader, mean, std, devic
                 if not os.path.exists(args.save_dir):
                     os.makedirs(args.save_dir)
 
-                torch.save(model.state_dict(), f'{args.save_dir}/checkpoint.pth')
+                torch.save(model.state_dict(), f'{args.save_dir}/checkpoint_epoch_{epoch + 1}_mae_{best_MAE}.pth')
                 print(f'\nBest model saved - epoch: {epoch + 1} - MAE: {best_MAE}')
 
     return model
