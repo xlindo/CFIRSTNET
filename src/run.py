@@ -119,7 +119,7 @@ def train(args, model, train_loader, valid_loader, test_loader, mean, std, devic
 
                     loss = criterion(pred, ir_drop) + aux_criterion(aux_pred, ir_drop)
                     
-                valid_result_save.update(pred, ir_drop, loss.item())
+                test_result_save.update(pred, ir_drop, loss.item())
         
         # lr schedule
         scheduler.step(epoch + 1)
@@ -174,11 +174,11 @@ def train(args, model, train_loader, valid_loader, test_loader, mean, std, devic
         if valid_result['mae'] < best_MAE:
             best_MAE = valid_result['mae']
         
-            if args.save_best_model:
+            if args.save_model:
                 if not os.path.exists(args.save_dir):
                     os.makedirs(args.save_dir)
 
-                torch.save(model.state_dict(), f'{args.save_dir}/checkpoint.pth')
+                torch.save(model.state_dict(), f'{args.save_dir}/checkpoint_epoch_{epoch + 1}_mae_{best_MAE}.pth')
                 print(f'\nBest model saved - epoch: {epoch + 1} - MAE: {best_MAE}')
 
     return model
@@ -209,8 +209,8 @@ def evaluate(args, model, valid_loader, test_loader, mean, std, device):
                 pred, aux_pred = model(image)
                 pred = reverse_normalize(pred, mean['ir_drop'], std['ir_drop'])
                 aux_pred = reverse_normalize(aux_pred, mean['ir_drop'], std['ir_drop'])
-                
-            valid_result_save.update(pred, ir_drop)
+
+            test_result_save.update(pred, ir_drop)
 
     # get result
     print(f'-------------------- Valid --------------------')

@@ -11,8 +11,8 @@ from tqdm import tqdm
 from datasets import Dataset
 from torch.utils.data import default_collate
 
-from loss import *
-from metrics import *
+from src.loss import *
+from src.metrics import *
 
 def seed_everything(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
@@ -194,7 +194,7 @@ class Result():
     def update(self, 
         input: torch.Tensor,
         target: List[torch.Tensor],
-        loss: torch.Tensor,
+        loss: torch.Tensor = None,
     ):
         data_len  = len(target)
         mae       = self.MAE      (input, target).data
@@ -212,7 +212,8 @@ class Result():
         else:
             raise ValueError(f"Unknown reduction: {self.reduction}")
         
-        self.loss += loss
+        if loss is not None:
+            self.loss += loss
 
         if self.reduction == "mean":
             self.mae += mae.mean()
@@ -292,7 +293,7 @@ class Result():
             self.rmse_min = rmse.min()
             
         return {
-            "loss": loss,
+            "loss": loss if loss is not None else 0.0,
             "mae": mae.mean(),
             "mse": mse.mean(),
             "f1_score": f1_score.mean(),
@@ -329,26 +330,26 @@ class Result():
     
     def average(self):
         return {
-            "loss": self.loss / self.data_len,
-            "mae": self.mae / self.data_len,
+            "loss": self.loss / self.data_len if self.data_len > 0 else 0.0,
+            "mae": self.mae / self.data_len if self.data_len > 0 else 0.0,
             "mae_max": self.mae_max,
             "mae_min": self.mae_min,
-            "mse": self.mse / self.data_len,
+            "mse": self.mse / self.data_len if self.data_len > 0 else 0.0,
             "mse_max": self.mse_max,
             "mse_min": self.mse_min,
-            "f1_score": self.f1_score / self.data_len,
+            "f1_score": self.f1_score / self.data_len if self.data_len > 0 else 0.0,
             "f1_score_max": self.f1_score_max,
             "f1_score_min": self.f1_score_min,
-            "recall": self.recall / self.data_len,
+            "recall": self.recall / self.data_len if self.data_len > 0 else 0.0,
             "recall_max": self.recall_max,
             "recall_min": self.recall_min,
-            "precision": self.precision / self.data_len,
+            "precision": self.precision / self.data_len if self.data_len > 0 else 0.0,
             "precision_max": self.precision_max,
             "precision_min": self.precision_min,
-            "max": self.max / self.data_len,
+            "max": self.max / self.data_len if self.data_len > 0 else 0.0,
             "max_max": self.max_max,
             "max_min": self.max_min,
-            "rmse": self.rmse / self.data_len,
+            "rmse": self.rmse / self.data_len if self.data_len > 0 else 0.0,
             "rmse_max": self.rmse_max,
             "rmse_min": self.rmse_min,
         }
